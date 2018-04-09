@@ -25,6 +25,7 @@
 	- Interactive mode to dialog to login
 	- Supports -Credentials parameter
 	- Supports using a service principal (Azure AD or certificate based) for automated logins for services and automation accounts
+
 ***Basics of Subscription Management***
 - Get-AzureRmSubscription
 	- Enumerates subscriptions you have access to
