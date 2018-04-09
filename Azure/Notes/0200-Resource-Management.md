@@ -53,7 +53,7 @@
 	- Start-AzureRmVM
 
 - Typical flow for creating a Virtual Machine
-	- Create Resource Group
+	- **Create Resource Group**
 	
 	```
 	> $Location = "West US"
@@ -61,16 +61,16 @@
 	> New-AzureRmResourceGroup -Name $rgVMName -Location $Location
 	```
 
-	- Create Storage Account
+	- **Create Storage Account**
 
 	```
 	> $storageAccount = "[Storage Account Name]"
 	> New-AzureRmStorageAccount -ResourceGroupName $rgVMName -Location $Location -Name $storageAccount -Type Standard_LRS
 	```
 
-	- Create NSG (Network Security Group) (Optional)
-	- Create Public IP (Optional)
-	- Create Network Interface
-	- Create Availability Set (Optional)
-	- Set OS Credentials
-	- Set the Image
+	- **Create NSG (Network Security Group) (Optional)**
+	- **Create Public IP (Optional)**
+	- **Create Network Interface**
+	- **Create Availability Set (Optional)**
+	- **Set OS Credentials**
+	- **Set the Image**
