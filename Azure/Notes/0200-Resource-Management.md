@@ -100,9 +100,9 @@
 	- **Create Network Interface**
 	
 	```
-	> $vnet = Get-AzureRmVirtualNetwork -ResourceGroupName $rgVNETName -Name VNETName
+	> $vnet = Get-AzureRmVirtualNetwork -ResourceGroupName $rgVMName -Name VNETName
 	> $nicName = "webVMNIC1"
-	> $nic = New-AzureRmNetworkInterface -Name $nicName -ResourceGroupName $rgVNETName -Location $Location -SubnetId $vnet.subnets[0].Id -PublicAddressId $pip.Id -NetworkSecurityGroupId $nsg.Id
+	> $nic = New-AzureRmNetworkInterface -Name $nicName -ResourceGroupName $rgVMName -Location $Location -SubnetId $vnet.subnets[0].Id -PublicAddressId $pip.Id -NetworkSecurityGroupId $nsg.Id
 	
 	* -PublicIpAddressId - associates with a Public IP (optional)
 	* -SubnetId - associates with the virtual network and subnet
@@ -112,11 +112,63 @@
 	- **Create Availability Set (Optional)**
 
 	```
-	> $avSet = New-AzureRmAvailabilitySet -ResourceGroupName $rgVNETName -Name "webAVSET" -Location $Location -PlatformUpdateDomainCount 5 -PlatformFaultDomainCount 3
+	> $avSet = New-AzureRmAvailabilitySet -ResourceGroupName $rgVMName -Name "webAVSET" -Location $Location -PlatformUpdateDomainCount 5 -PlatformFaultDomainCount 3
 	
 	* -PlatformUpdateDomainCount - default 5, maximum of 20
 	* -PlatformFaultDomainCount - default 3, maximum of 3
 	```
 
-	- **Set OS Credentials**
+	- ***Create VM Configuration***
+
+	```
+	> $vmName = "webvm-1"
+	> $vmSize = "Standard_A1"
+	> $vm = New-AzureRmVMConfig -VMName $vmName -VMSize $vmSize -AvailabilitySetId $avSet.Id
+
+	* New-AzureRmVMConfig creates a local object that can be configured with settings such as NICs, Storage, etc.,
+	* The availability set is specified by specifying Id of the previously created Availability Set to the -AvailabilitySetId parameter
+	```
+
+	- ***Attaching a Data Disk***
+	
+	```
+	# Get the current storage account
+	> $storageAcc = Get-AzureRmStorageAccount -ResourceGroupName $rgVMName -Name $storageAccount
+
+	# Return the HTTP endpoint
+	> $blobEndpoint = $storageAcc.PrimaryEndpoints.Blob.ToString()
+	> $dataDisk1Name = "vm1-datadisk1"
+	
+	# Build the Full url to VHD
+	> $dataDisk1Uri = $blobEndpoint + "vhds/" + $dataDisk1Name + ".vhd"
+	
+	# Specify the disk on the VM configuration
+	> $vm | Add-AzureRmVMDataDisk -Name "datadisk1" -VhdUri $dataDisk1Uri -Caching None -DiskSizeInGB 1023 -Lun 0 -CreateOption empty
+	
+	* The Add-AzureRmVMDataDisk cmdlet modifies the virtual machine configuration object ($vm)
+	* $vm can be piped in as shown in the example or passed via the -VM parameter
+	```
+
+	- **Set OS Type and Credentials**
+	
+	```
+	> $cred = Get-Credential -Message "Enter Admin Credentials"
+	> $vm | Set-AzureRmVMOperatingSystem -Windows -ComputerName $vmName -Credential $cred - ProvisionVMAgent
+	
+	* Coming from Classic - this is similar to the Add-AzureProvisioningConfig cmdlet
+	* It does not support the -WindowsDomain parameter set though
+	* Supports -Linux parameter set
+	* Supports -CustomData patameter set to specify a custom file to be passed to the operating system
+	```
+
 	- **Set the Image**
+
+	```
+	> $pubName = "MicrosoftWindowsServer"
+	> $offerName = "WindowsServer"
+	> $skuName = "2012-R2-Datacenter"
+	> $vm | Set-AzureRmVMSourceImage -PublisherName $pubName -Offer $offerName -Skus $skuName -Version "latest"
+	> $osDiskName = "vm1-osdisk0"
+	> $osDiskUri = $blobEndpoint + "vhds/" + $osDiskName + ".vhd"
+	> $mv | Set-AzureRmVMOSDisk -Name $osDiskName -VhdUri $osDiskUri -CreateOption fromImage
+	```
