@@ -98,6 +98,25 @@
 	```
 
 	- **Create Network Interface**
+	
+	```
+	> $vnet = Get-AzureRmVirtualNetwork -ResourceGroupName $rgVNETName -Name VNETName
+	> $nicName = "webVMNIC1"
+	> $nic = New-AzureRmNetworkInterface -Name $nicName -ResourceGroupName $rgVNETName -Location $Location -SubnetId $vnet.subnets[0].Id -PublicAddressId $pip.Id -NetworkSecurityGroupId $nsg.Id
+	
+	* -PublicIpAddressId - associates with a Public IP (optional)
+	* -SubnetId - associates with the virtual network and subnet
+	* -NetworkSecurityGroupId - associates with a network security group (optional)
+	```
+
 	- **Create Availability Set (Optional)**
+
+	```
+	> $avSet = New-AzureRmAvailabilitySet -ResourceGroupName $rgVNETName -Name "webAVSET" -Location $Location -PlatformUpdateDomainCount 5 -PlatformFaultDomainCount 3
+	
+	* -PlatformUpdateDomainCount - default 5, maximum of 20
+	* -PlatformFaultDomainCount - default 3, maximum of 3
+	```
+
 	- **Set OS Credentials**
 	- **Set the Image**
