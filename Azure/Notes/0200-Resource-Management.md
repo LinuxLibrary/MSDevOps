@@ -68,12 +68,12 @@
 	> New-AzureRmStorageAccount -ResourceGroupName $rgVMName -Location $Location -Name $storageAccount -Type Standard_LRS
 	```
 	
-		**Other supported types
-		- Standard_LRS	: Locally Redundant Storage
-		- Standard_GRS	: Geo-Redundant
-		- Standard_GARS	: Geo-Redundant Read Access
-		- Premium_LRS	: Premium Locally Redundant
-		- Standard_ZRS	: Zero Redundant (Not supported for VMs)
+		- **Other supported types
+			- Standard_LRS	: Locally Redundant Storage
+			- Standard_GRS	: Geo-Redundant
+			- Standard_GARS	: Geo-Redundant Read Access
+			- Premium_LRS	: Premium Locally Redundant
+			- Standard_ZRS	: Zero Redundant (Not supported for VMs)
 
 	- **Create NSG (Network Security Group) (Optional)**
 
@@ -93,9 +93,9 @@
 	> $pip = New-AzureRmPublicIpAddress -Name $ipName -ResourceGroupName $RGVNETName -Location $Location -AllocationMethod Dynamic -DomainNameLabel $dnsName
 	```
 
-	**AllocationMethod**
-	- Dynamic assigned to a Network Interface or Load Balancer
-	- Static only when assigned to a Load Balancer
+		- **AllocationMethod**
+			- Dynamic assigned to a Network Interface or Load Balancer
+			- Static only when assigned to a Load Balancer
 
 	- **Create Network Interface**
 	- **Create Availability Set (Optional)**
