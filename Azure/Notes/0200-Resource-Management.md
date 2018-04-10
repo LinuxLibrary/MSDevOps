@@ -68,7 +68,7 @@
 	> New-AzureRmStorageAccount -ResourceGroupName $rgVMName -Location $Location -Name $storageAccount -Type Standard_LRS
 	```
 	
-		- **Other supported types
+		- **Other supported types**
 			- Standard_LRS	: Locally Redundant Storage
 			- Standard_GRS	: Geo-Redundant
 			- Standard_GARS	: Geo-Redundant Read Access
